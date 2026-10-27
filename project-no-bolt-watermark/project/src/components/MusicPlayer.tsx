@@ -64,9 +64,7 @@ export default function MusicPlayer() {
         audio.play().catch(() => {});
       });
 
-    // Mobile browsers only grant playback permission on "activation" events
-    // (touchend/click/pointerup), not on pointerdown or scroll gestures, so keep
-    // listening until audible playback actually succeeds.
+    // Keep retrying on every user gesture until audible playback actually succeeds.
     let attempting = false;
     const unlock = () => {
       if (unlockedRef.current || userPausedRef.current) return cleanup();
@@ -87,9 +85,20 @@ export default function MusicPlayer() {
         })
         .finally(() => { attempting = false; });
     };
-    const events = ['touchend', 'pointerup', 'click', 'keydown'] as const;
-    const cleanup = () => events.forEach((e) => window.removeEventListener(e, unlock, true));
-    events.forEach((e) => window.addEventListener(e, unlock, { capture: true }));
+    // Scroll-type events are included so every gesture gets a try; browsers that
+    // don't count them as activation simply reject play() and we keep listening.
+    const events = [
+      'touchstart', 'touchmove', 'touchend',
+      'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown',
+      'wheel', 'scroll',
+    ] as const;
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, unlock, true));
+      window.removeEventListener('portfolio:enter', unlock);
+    };
+    events.forEach((e) => window.addEventListener(e, unlock, { capture: true, passive: true }));
+    // The enter screen dispatches this synchronously inside its click handler, so it counts as a gesture.
+    window.addEventListener('portfolio:enter', unlock);
     return cleanup;
   }, []);
 

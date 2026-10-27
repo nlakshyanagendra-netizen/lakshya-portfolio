@@ -26,9 +26,30 @@ export default function EdgePet() {
   const timers = useRef<number[]>([]);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
+  const msgTimer = useRef<number | null>(null);
+
   const clearTimers = () => {
     timers.current.forEach((t) => clearTimeout(t));
     timers.current = [];
+    if (msgTimer.current) clearTimeout(msgTimer.current);
+    msgTimer.current = null;
+  };
+
+  // Single owner for the bubble timer so overlapping messages can't leave a stale bubble behind.
+  const showMsg = (text: string, duration: number) => {
+    if (msgTimer.current) clearTimeout(msgTimer.current);
+    setMsg(text);
+    msgTimer.current = window.setTimeout(() => {
+      setMsg(null);
+      msgTimer.current = null;
+    }, duration);
+  };
+
+  const hidePet = () => {
+    if (msgTimer.current) clearTimeout(msgTimer.current);
+    msgTimer.current = null;
+    setMsg(null);
+    setState('hidden');
   };
 
   // Publish pet bounds to the shared pointer store (for spark reduction).
@@ -72,10 +93,9 @@ export default function EdgePet() {
         }
         // spontaneously say something on its own
         if (Math.random() < 0.5) {
-          setMsg(petMessages[Math.floor(Math.random() * petMessages.length)]);
-          timers.current.push(window.setTimeout(() => setMsg(null), 3200));
+          showMsg(petMessages[Math.floor(Math.random() * petMessages.length)], 3200);
         }
-        timers.current.push(window.setTimeout(() => setState('hidden'), 4500));
+        timers.current.push(window.setTimeout(hidePet, 4500));
         timers.current.push(window.setTimeout(cycle, 9000 + Math.random() * 7000));
       }, 2000));
     };
@@ -89,8 +109,8 @@ export default function EdgePet() {
     if (!petVisible || reduced) return;
     if (active === 'projects' || active === 'achievements' || active === 'contact') {
       setState('peek');
-      setMsg(petMessages[Math.floor(Math.random() * petMessages.length)]);
-      timers.current.push(window.setTimeout(() => setMsg(null), 3500));
+      showMsg(petMessages[Math.floor(Math.random() * petMessages.length)], 3500);
+      timers.current.push(window.setTimeout(hidePet, 4500));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
@@ -102,12 +122,11 @@ export default function EdgePet() {
     const text = easterEgg
       ? 'You found the hidden spark. Curiosity rewarded.'
       : petMessages[Math.floor(Math.random() * petMessages.length)];
-    setMsg(text);
+    showMsg(text, 2600);
     setSparkle(true);
     if (soundEnabled) playChime();
     timers.current.push(window.setTimeout(() => {
       setSparkle(false);
-      setMsg(null);
       setState('peek');
     }, 2600));
   };
@@ -121,7 +140,7 @@ export default function EdgePet() {
       aria-live="polite"
     >
       {/* Speech bubble — anchored to the untranslated container so it never slides past the viewport edge */}
-      {msg && (
+      {msg && state !== 'hidden' && (
         <div className="absolute bottom-full right-3 mb-2 panel px-3 py-2 w-max max-w-[min(240px,calc(100vw-1.5rem))] animate-fade-in">
           <p className="text-xs text-fg-bright leading-snug break-words">{msg}</p>
           <span className="absolute -bottom-1 right-16 w-2 h-2 bg-panel border-b border-l border-line rotate-[-45deg]" />

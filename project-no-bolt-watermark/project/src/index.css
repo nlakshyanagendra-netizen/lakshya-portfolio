@@ -365,6 +365,61 @@
     100% { height: 100%; }
   }
 
+  .enter-grid {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .enter-vignette {
+    background: radial-gradient(circle at center, rgba(67, 230, 255, 0.08), transparent 45%, var(--bg-base) 85%);
+  }
+  .enter-ring {
+    animation: enterRing 2.4s var(--ease-out) infinite;
+  }
+  .enter-ring-delay {
+    animation-delay: 1.2s;
+  }
+  @keyframes enterRing {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .enter-shake {
+    animation: enterShake 0.9s linear both;
+  }
+  @keyframes enterShake {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-3px, 2px); }
+    20% { transform: translate(4px, -2px); }
+    30% { transform: translate(-4px, -3px); }
+    40% { transform: translate(3px, 4px); }
+    50% { transform: translate(-5px, 1px); }
+    60% { transform: translate(5px, -3px); }
+    70% { transform: translate(-3px, 4px); }
+    80% { transform: translate(4px, -1px); }
+    90% { transform: translate(-2px, 2px); }
+  }
+  .enter-flash {
+    animation: enterFlash 1.6s ease-out both;
+  }
+  @keyframes enterFlash {
+    0% { background: transparent; }
+    15% { background: rgba(67, 230, 255, 0.12); }
+    22% { background: transparent; }
+    35% { background: rgba(176, 123, 255, 0.15); }
+    42% { background: transparent; }
+    55% { background: rgba(243, 247, 255, 0.95); }
+    70% { background: rgba(139, 241, 255, 0.5); }
+    100% { background: transparent; }
+  }
+  .enter-reveal {
+    animation: enterReveal 0.7s var(--ease-in-out) both;
+  }
+  @keyframes enterReveal {
+    from { clip-path: circle(150% at 50% 50%); opacity: 1; }
+    to { clip-path: circle(0% at 50% 50%); opacity: 0; }
+  }
+
   .blink {
     animation: blink 4.5s infinite;
   }
