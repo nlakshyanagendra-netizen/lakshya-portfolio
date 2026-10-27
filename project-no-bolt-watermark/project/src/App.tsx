@@ -12,10 +12,12 @@ import ScrollReactiveBackground from '@/components/ScrollReactiveBackground';
 import EdgePet from '@/components/EdgePet';
 import MusicPlayer from '@/components/MusicPlayer';
 import CommandPalette from '@/components/CommandPalette';
+import EnterScreen from '@/components/EnterScreen';
 
 function Portfolio() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [highlightedProject, setHighlightedProject] = useState<string | null>(null);
+  const [entered, setEntered] = useState(false);
 
   // Command palette keybinding: Ctrl+K / Cmd+K
   useEffect(() => {
@@ -60,6 +62,7 @@ function Portfolio() {
       <EdgePet />
       <MusicPlayer />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      {!entered && <EnterScreen onDone={() => setEntered(true)} />}
     </>
   );
 }

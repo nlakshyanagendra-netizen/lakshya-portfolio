@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#0a1830" />
+      <stop offset="100%" stop-color="#03050c" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)" />
+  <g stroke="#43e6ff" stroke-width="1.2" fill="none" opacity="0.4">
+    <circle cx="430" cy="315" r="160" />
+    <circle cx="430" cy="315" r="220" opacity="0.6" />
+    <circle cx="430" cy="315" r="280" opacity="0.4" />
+  </g>
+  <circle cx="430" cy="315" r="22" fill="#43e6ff" />
+  <text x="680" y="290" font-family="Space Grotesk, sans-serif" font-size="78" font-weight="600" fill="#f3f7ff">LAKSHYA</text>
+  <text x="680" y="345" font-family="JetBrains Mono, monospace" font-size="22" fill="#43e6ff" letter-spacing="3">ELECTRICAL · PHYSICS · ROBOTICS · AI</text>
+  <text x="680" y="400" font-family="Space Grotesk, sans-serif" font-size="24" fill="#8a94ad">Turning physical phenomena into things that work.</text>
+</svg>

@@ -92,8 +92,13 @@ export default function MusicPlayer() {
       'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown',
       'wheel', 'scroll',
     ] as const;
-    const cleanup = () => events.forEach((e) => window.removeEventListener(e, unlock, true));
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, unlock, true));
+      window.removeEventListener('portfolio:enter', unlock);
+    };
     events.forEach((e) => window.addEventListener(e, unlock, { capture: true, passive: true }));
+    // The enter screen dispatches this synchronously inside its click handler, so it counts as a gesture.
+    window.addEventListener('portfolio:enter', unlock);
     return cleanup;
   }, []);
 
