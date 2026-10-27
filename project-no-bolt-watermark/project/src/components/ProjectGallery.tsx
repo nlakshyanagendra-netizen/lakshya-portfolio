@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowUpRight, X, Cpu, ShieldAlert, ExternalLink, FileText } from 'lucide-react';
 import { projects, type Category, type Project } from '@/config/site';
 import ProjectVisual from './ProjectVisual';
@@ -81,7 +82,7 @@ export default function ProjectGallery({ highlightId }: { highlightId?: string |
         ))}
       </div>
 
-      {open && <CaseStudy project={open} onClose={() => setOpen(null)} />}
+      {open && createPortal(<CaseStudy project={open} onClose={() => setOpen(null)} />, document.body)}
     </section>
   );
 }
@@ -95,15 +96,16 @@ function CaseStudy({ project, onClose }: { project: Project; onClose: () => void
       aria-label={`${project.title} details`}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-      <div className="relative w-full max-w-3xl panel frame max-h-[92vh] overflow-y-auto animate-scale-in">
+      <div className="relative w-full max-w-3xl panel frame flex flex-col max-h-[85dvh] sm:max-h-[90dvh] overflow-hidden rounded-b-none sm:rounded-[18px] animate-scale-in">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full border border-line text-fg-muted hover:text-cyan hover:border-cyan/50"
+          className="absolute top-3 right-3 z-20 flex items-center justify-center w-10 h-10 rounded-full border border-line bg-black/70 backdrop-blur-md text-fg-bright shadow-lg hover:text-cyan hover:border-cyan/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
           aria-label="Close details"
         >
-          <X size={16} />
+          <X size={18} />
         </button>
 
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         <div className="h-56 sm:h-72">
           <ProjectVisual project={project} className="w-full h-full" />
         </div>
@@ -160,6 +162,7 @@ function CaseStudy({ project, onClose }: { project: Project; onClose: () => void
               <p className="text-xs text-fg-dim">Links will appear here once added in the configuration file.</p>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>
