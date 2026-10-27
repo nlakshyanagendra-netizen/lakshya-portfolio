@@ -57,49 +57,16 @@ export default function MusicPlayer() {
       return audio.play();
     };
 
-    startAudible()
-      .then(() => { unlockedRef.current = true; })
-      .catch(() => {
-        audio.muted = true;
-        audio.play().catch(() => {});
-      });
-
-    // Keep retrying on every user gesture until audible playback actually succeeds.
-    let attempting = false;
-    const unlock = () => {
-      if (unlockedRef.current || userPausedRef.current) return cleanup();
-      if (attempting) return;
-      attempting = true;
-      // iOS won't unmute a muted-autoplay element in place; restart it inside the gesture.
-      if (!audio.paused && audio.muted && soundRef.current) audio.pause();
+    // Music starts only when the visitor presses the Enter button. The enter screen
+    // dispatches this synchronously inside its click handler, so it counts as a gesture.
+    const start = () => {
+      if (unlockedRef.current || userPausedRef.current) return;
       startAudible()
-        .then(() => {
-          if (!audio.paused) {
-            unlockedRef.current = true;
-            cleanup();
-          }
-        })
-        .catch(() => {
-          audio.muted = true;
-          audio.play().catch(() => {});
-        })
-        .finally(() => { attempting = false; });
+        .then(() => { unlockedRef.current = true; })
+        .catch(() => {});
     };
-    // Scroll-type events are included so every gesture gets a try; browsers that
-    // don't count them as activation simply reject play() and we keep listening.
-    const events = [
-      'touchstart', 'touchmove', 'touchend',
-      'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown',
-      'wheel', 'scroll',
-    ] as const;
-    const cleanup = () => {
-      events.forEach((e) => window.removeEventListener(e, unlock, true));
-      window.removeEventListener('portfolio:enter', unlock);
-    };
-    events.forEach((e) => window.addEventListener(e, unlock, { capture: true, passive: true }));
-    // The enter screen dispatches this synchronously inside its click handler, so it counts as a gesture.
-    window.addEventListener('portfolio:enter', unlock);
-    return cleanup;
+    window.addEventListener('portfolio:enter', start);
+    return () => window.removeEventListener('portfolio:enter', start);
   }, []);
 
   useEffect(() => {
