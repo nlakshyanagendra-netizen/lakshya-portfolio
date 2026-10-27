@@ -62,7 +62,8 @@ export function useActiveSection(ids: string[]) {
 export function useStoredState(key: string, initial: boolean) {
   const [value, setValue] = useState(() => {
     try {
-      return localStorage.getItem(key) === '1' ? true : initial;
+      const stored = localStorage.getItem(key);
+      return stored === null ? initial : stored === '1';
     } catch {
       return initial;
     }

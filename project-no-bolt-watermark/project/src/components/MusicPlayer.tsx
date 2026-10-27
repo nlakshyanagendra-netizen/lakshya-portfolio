@@ -39,47 +39,64 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  // Attempt autoplay (muted). Unmute on first interaction if sound is enabled.
+  // Music is on by default. Browsers block audible autoplay until the visitor
+  // interacts, so: try audible playback immediately; if blocked, start muted
+  // and unmute on the very first interaction (unless the user paused/muted).
+  const userPausedRef = useRef(false);
+  const unlockedRef = useRef(false);
+  const soundRef = useRef(soundEnabled);
+  soundRef.current = soundEnabled;
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.muted = !soundEnabled;
-    audio.play().then(() => setPlaying(true)).catch(() => {
-      // Autoplay blocked — wait for first interaction.
-    });
-  }, [ready]);
 
-  useEffect(() => {
+    const startAudible = () => {
+      audio.muted = !soundRef.current;
+      audio.volume = 0.45;
+      return audio.play();
+    };
+
+    startAudible()
+      .then(() => { unlockedRef.current = true; })
+      .catch(() => {
+        audio.muted = true;
+        audio.play().catch(() => {});
+      });
+
     const unlock = () => {
-      const audio = audioRef.current;
-      if (!audio || error) return;
-      if (soundEnabled) {
-        audio.muted = false;
-        audio.volume = 0.45;
-        audio.play().then(() => setPlaying(true)).catch(() => setError(true));
-      }
+      if (unlockedRef.current) return cleanup();
+      unlockedRef.current = true;
+      cleanup();
+      if (userPausedRef.current) return;
+      startAudible().catch(() => {});
     };
-    window.addEventListener('pointerdown', unlock);
-    window.addEventListener('keydown', unlock);
-    return () => {
-      window.removeEventListener('pointerdown', unlock);
-      window.removeEventListener('keydown', unlock);
-    };
-  }, [soundEnabled, error]);
+    const events = ['pointerdown', 'keydown', 'touchend', 'click'] as const;
+    const cleanup = () => events.forEach((e) => window.removeEventListener(e, unlock, true));
+    events.forEach((e) => window.addEventListener(e, unlock, { capture: true }));
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !ready) return;
+    // Unmuting before a user gesture would make the browser pause playback.
+    if (soundEnabled && !unlockedRef.current) return;
     audio.muted = !soundEnabled;
-    if (!soundEnabled) audio.volume = 0;
-    else audio.volume = 0.45;
+    audio.volume = soundEnabled ? 0.45 : 0;
   }, [soundEnabled, ready]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio || error) return;
-    if (playing) audio.pause();
-    else audio.play().then(() => setPlaying(true)).catch(() => setError(true));
+    if (playing) {
+      userPausedRef.current = true;
+      audio.pause();
+    } else {
+      userPausedRef.current = false;
+      audio.muted = !soundEnabled;
+      audio.play().then(() => setPlaying(true)).catch(() => setError(true));
+    }
   };
 
   return (

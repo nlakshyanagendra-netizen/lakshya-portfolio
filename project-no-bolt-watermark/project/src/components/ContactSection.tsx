@@ -48,12 +48,21 @@ export default function ContactSection() {
     try {
       const res = await fetch(site.contactEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          name: form.name, email: form.email, subject: form.subject, message: form.message,
+          access_key: site.web3formsAccessKey,
+          subject: `[Portfolio] ${form.subject}`,
+          from_name: 'Lakshya Portfolio',
+          name: form.name,
+          email: form.email,
+          replyto: form.email,
+          topic: form.subject,
+          message: form.message,
+          botcheck: false,
         }),
       });
-      if (!res.ok) throw new Error('Request failed');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) throw new Error(data?.message || 'Request failed');
       setStatus('sent');
       setForm({ name: '', email: '', subject: '', message: '', company: '' });
     } catch {

@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useStoredState } from '@/hooks';
 
 type SettingsContextType = {
   soundEnabled: boolean;
@@ -67,7 +66,7 @@ function createChime(ctx: AudioContext) {
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [soundEnabled, setSound] = useStoredState('lakshya.sound', true);
+  const [soundEnabled, setSound] = useState(true);
   const [petVisible, setPetVisible] = useState(true);
   const audioRef = useRef<AudioContext | null>(null);
 
