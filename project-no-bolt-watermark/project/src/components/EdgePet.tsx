@@ -120,14 +120,15 @@ export default function EdgePet() {
       style={{ animation: 'fadeIn 0.5s both' }}
       aria-live="polite"
     >
+      {/* Speech bubble — anchored to the untranslated container so it never slides past the viewport edge */}
+      {msg && (
+        <div className="absolute bottom-full right-3 mb-2 panel px-3 py-2 w-max max-w-[min(240px,calc(100vw-1.5rem))] animate-fade-in">
+          <p className="text-xs text-fg-bright leading-snug break-words">{msg}</p>
+          <span className="absolute -bottom-1 right-16 w-2 h-2 bg-panel border-b border-l border-line rotate-[-45deg]" />
+        </div>
+      )}
+
       <div ref={wrapRef} className={`relative transition-transform duration-500 ${offsetX}`} style={{ width: SIZE, height: SIZE + 16 }}>
-        {/* Speech bubble */}
-        {msg && (
-          <div className="absolute bottom-full right-2 mb-2 panel px-3 py-2 max-w-[220px] animate-fade-in">
-            <p className="text-xs text-fg-bright leading-snug">{msg}</p>
-            <span className="absolute -bottom-1 right-8 w-2 h-2 bg-panel border-b border-l border-line rotate-[-45deg]" />
-          </div>
-        )}
 
         {/* Dismiss */}
         <button
