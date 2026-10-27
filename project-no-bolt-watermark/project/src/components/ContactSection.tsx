@@ -114,7 +114,7 @@ export default function ContactSection() {
               {site.email ? (
                 <a href={`mailto:${site.email}`} className="text-sm text-fg link-underline">{site.email}</a>
               ) : (
-                <span className="text-sm text-fg-dim">Email will appear here once added in config</span>
+                <span className="text-sm text-fg-dim">Get in touch using the form below</span>
               )}
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function ContactSection() {
             <div className="mt-4 panel px-4 py-3 flex items-start gap-2 text-sm text-fg-muted border-amber/30">
               <Info size={14} className="shrink-0 mt-0.5 text-amber" />
               <span>
-                Submission isn't wired up yet — add a contact endpoint or your email address in the config file.
+                Message sending is temporarily unavailable.
                 {emailHref && <> In the meantime, use the “Open in email app” button above.</>}
               </span>
             </div>
