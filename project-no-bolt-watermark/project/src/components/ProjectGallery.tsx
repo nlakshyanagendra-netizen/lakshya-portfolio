@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, X, Cpu, ShieldAlert, ExternalLink, FileText } from 'lucide-react';
+import { ArrowUpRight, X, ShieldAlert, ExternalLink, FileText } from 'lucide-react';
 import { projects, type Category, type Project } from '@/config/site';
 import ProjectVisual from './ProjectVisual';
 import { usePrefersReducedMotion } from '@/hooks';
@@ -133,19 +133,6 @@ function CaseStudy({ project, onClose }: { project: Project; onClose: () => void
             </div>
           )}
 
-          {/* Editable media placeholders */}
-          <h4 className="mt-7 t-label">Media & documentation</h4>
-          <div className="mt-3 grid sm:grid-cols-2 gap-3">
-            {(['photoUrl', 'diagramUrl', 'videoUrl'] as const).map((k) => (
-              <div key={k} className="panel px-4 py-4 flex items-center gap-3 text-sm text-fg-dim">
-                <Cpu size={14} className="text-fg-dim" />
-                <span>
-                  {k === 'photoUrl' ? 'Experimental photograph' : k === 'diagramUrl' ? 'Circuit / system diagram' : 'Video'}
-                  <span className="block text-xs text-fg-dim/70 mt-0.5">Placeholder — add URL in site config</span>
-                </span>
-              </div>
-            ))}
-          </div>
 
           <div className="mt-5 flex flex-wrap gap-3">
             {project.links?.source && (
@@ -158,9 +145,7 @@ function CaseStudy({ project, onClose }: { project: Project; onClose: () => void
                 <FileText size={14} /> Documentation
               </a>
             )}
-            {!project.links?.source && !project.links?.docs && (
-              <p className="text-xs text-fg-dim">Links will appear here once added in the configuration file.</p>
-            )}
+
           </div>
         </div>
         </div>
