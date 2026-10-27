@@ -71,10 +71,10 @@ export const site = {
   // Replace with your real address. Leaving this empty keeps a placeholder.
   email: 'nlakshyanagendra@gmail.com',
 
-  // Contact form submission endpoint (optional).
-  // Leave empty to use the documented email fallback.
-  // Example: 'https://formspree.io/f/your-id' or a Supabase Edge Function URL.
-  contactEndpoint: '',
+  // Contact form is delivered via Web3Forms (https://web3forms.com).
+  // The access key is public by design and restricted to the registered domain.
+  contactEndpoint: 'https://api.web3forms.com/submit',
+  web3formsAccessKey: '7926bef6-ad49-4962-9e0e-bd59a1e7110a',
 
   // Owner-configured, fixed music reference (YouTube video ID).
   // Visitors are not offered a track-selection interface.
